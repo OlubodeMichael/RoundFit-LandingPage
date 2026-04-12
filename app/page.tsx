@@ -288,23 +288,55 @@ function AppCard() {
   );
 }
 
+type WaitlistSubmitResult =
+  | { ok: true; alreadyOnWaitlist?: boolean }
+  | { ok: false; error: string };
+
+async function submitWaitlist(email: string): Promise<WaitlistSubmitResult> {
+  const res = await fetch("/api/waitlist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    error?: string;
+    alreadyOnWaitlist?: boolean;
+  };
+  if (!res.ok) {
+    return { ok: false, error: data.error ?? "Something went wrong. Try again." };
+  }
+  if (data.alreadyOnWaitlist) {
+    return { ok: true, alreadyOnWaitlist: true };
+  }
+  return { ok: true };
+}
+
+type WaitlistOutcome = null | "joined" | "already";
+
+/** How long the “already on waitlist” notice stays visible before the form returns. */
+const WAITLIST_ALREADY_DISMISS_MS = 4000;
+
 /* ─────────────────────────────────────────────────
    Email form: dark and light variants
 ───────────────────────────────────────────────── */
 function EmailForm({
   email,
   setEmail,
-  submitted,
+  outcome,
   onSubmit,
   dark,
+  submitting,
+  error,
 }: {
   email: string;
   setEmail: (v: string) => void;
-  submitted: boolean;
-  onSubmit: (e: React.FormEvent) => void;
+  outcome: WaitlistOutcome;
+  onSubmit: (e: React.FormEvent) => void | Promise<void>;
   dark?: boolean;
+  submitting?: boolean;
+  error?: string | null;
 }) {
-  if (submitted) {
+  if (outcome === "joined") {
     return (
       <div className="success-msg">
         <svg
@@ -323,21 +355,53 @@ function EmailForm({
       </div>
     );
   }
+  if (outcome === "already") {
+    return (
+      <div className="success-msg waitlist-already">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4M12 8h.01" />
+        </svg>
+        You&apos;re already on the waitlist. We&apos;ll email you when we launch.
+      </div>
+    );
+  }
 
   return (
-    <form className="form-row" onSubmit={onSubmit}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        required
-        className={dark ? "input-dark" : "input-light"}
-      />
-      <button type="submit" className="btn-orange">
-        {dark ? "Get Early Access" : "Join the Waitlist"}
-      </button>
-    </form>
+    <div style={{ width: "100%", maxWidth: 520 }}>
+      <form className="form-row" onSubmit={onSubmit}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+          disabled={submitting}
+          className={dark ? "input-dark" : "input-light"}
+        />
+        <button type="submit" className="btn-orange" disabled={submitting}>
+          {submitting
+            ? "Sending…"
+            : dark
+              ? "Get Early Access"
+              : "Join the Waitlist"}
+        </button>
+      </form>
+      {error ? (
+        <p className={`form-error${dark ? " form-error--dark" : ""}`} role="alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -449,9 +513,31 @@ function FeatureCardGlyph({ icon }: { icon: FeatureIconId }) {
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [heroEmail, setHeroEmail] = useState("");
-  const [heroSubmitted, setHeroSubmitted] = useState(false);
+  const [heroOutcome, setHeroOutcome] = useState<WaitlistOutcome>(null);
+  const [heroSubmitting, setHeroSubmitting] = useState(false);
+  const [heroError, setHeroError] = useState<string | null>(null);
   const [ctaEmail, setCtaEmail] = useState("");
-  const [ctaSubmitted, setCtaSubmitted] = useState(false);
+  const [ctaOutcome, setCtaOutcome] = useState<WaitlistOutcome>(null);
+  const [ctaSubmitting, setCtaSubmitting] = useState(false);
+  const [ctaError, setCtaError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (heroOutcome !== "already") return;
+    const id = window.setTimeout(() => {
+      setHeroOutcome(null);
+      setHeroEmail("");
+    }, WAITLIST_ALREADY_DISMISS_MS);
+    return () => window.clearTimeout(id);
+  }, [heroOutcome]);
+
+  useEffect(() => {
+    if (ctaOutcome !== "already") return;
+    const id = window.setTimeout(() => {
+      setCtaOutcome(null);
+      setCtaEmail("");
+    }, WAITLIST_ALREADY_DISMISS_MS);
+    return () => window.clearTimeout(id);
+  }, [ctaOutcome]);
 
   /* Scroll-aware nav */
   useEffect(() => {
@@ -660,26 +746,48 @@ export default function Home() {
           >
             <form
               className="form-row"
-              onSubmit={(e) => {
+              style={{ flexDirection: "column", alignItems: "stretch", gap: 0 }}
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setHeroSubmitted(true);
+                setHeroError(null);
+                setHeroSubmitting(true);
+                try {
+                  const r = await submitWaitlist(heroEmail.trim());
+                  if (r.ok) {
+                    setHeroOutcome(r.alreadyOnWaitlist ? "already" : "joined");
+                  } else {
+                    setHeroError(r.error ?? "Try again.");
+                  }
+                } finally {
+                  setHeroSubmitting(false);
+                }
               }}
             >
-              {heroSubmitted ? (
+              {heroOutcome === "joined" ? (
                 <div className="success-msg">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                   You&apos;re on the list. We&apos;ll be in touch soon.
                 </div>
+              ) : heroOutcome === "already" ? (
+                <div className="success-msg waitlist-already">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4M12 8h.01" />
+                  </svg>
+                  You&apos;re already on the waitlist. We&apos;ll email you when we launch.
+                </div>
               ) : (
                 <>
+                  <div className="form-row" style={{ width: "100%" }}>
                   <input
                     type="email"
                     value={heroEmail}
                     onChange={(e) => setHeroEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
+                    disabled={heroSubmitting}
                     style={{
                       flex: 1,
                       minWidth: 0,
@@ -705,6 +813,7 @@ export default function Home() {
                   <button
                     type="submit"
                     className="btn-orange"
+                    disabled={heroSubmitting}
                     style={{
                       padding: "clamp(13px, 3.5vw, 15px) clamp(18px, 5vw, 28px)",
                       fontSize: "clamp(0.9rem, 2.8vw, 1rem)",
@@ -712,15 +821,21 @@ export default function Home() {
                       boxSizing: "border-box",
                     }}
                   >
-                    Join the Waitlist →
+                    {heroSubmitting ? "Sending…" : "Join the Waitlist →"}
                   </button>
+                  </div>
+                  {heroError ? (
+                    <p className="form-error form-error--dark" role="alert" style={{ marginTop: 12 }}>
+                      {heroError}
+                    </p>
+                  ) : null}
                 </>
               )}
             </form>
           </div>
 
           {/* Social proof */}
-          {!heroSubmitted && (
+          {!heroOutcome && (
             <p
               className="h4"
               style={{
@@ -1142,10 +1257,23 @@ export default function Home() {
             <EmailForm
               email={ctaEmail}
               setEmail={setCtaEmail}
-              submitted={ctaSubmitted}
-              onSubmit={(e) => {
+              outcome={ctaOutcome}
+              submitting={ctaSubmitting}
+              error={ctaError}
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setCtaSubmitted(true);
+                setCtaError(null);
+                setCtaSubmitting(true);
+                try {
+                  const r = await submitWaitlist(ctaEmail.trim());
+                  if (r.ok) {
+                    setCtaOutcome(r.alreadyOnWaitlist ? "already" : "joined");
+                  } else {
+                    setCtaError(r.error ?? "Try again.");
+                  }
+                } finally {
+                  setCtaSubmitting(false);
+                }
               }}
               dark
             />
