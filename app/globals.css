@@ -64,6 +64,29 @@
   }
 }
 
+/* ── Hero app-card: one card, content refresh ───────── */
+@keyframes app-card-body-tick {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Strong ease-out: settles softly at the end (not symmetric ease-in-out). */
+.app-card-body-slot {
+  animation: app-card-body-tick 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.app-card-progress-fill {
+  transition: width 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-card-body-slot { animation: none; }
+  .app-card-progress-fill { transition: none; }
+}
+
 /* ── Fonts ───────────────────────────────────────────── */
 .display { font-family: var(--font-syne), sans-serif; }
 

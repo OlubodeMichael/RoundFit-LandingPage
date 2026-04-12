@@ -2,11 +2,237 @@
 
 import { useState, useEffect } from "react";
 
+type InstructionIcon = "walk" | "bike" | "run" | "stairs";
+
+type InstructionSlide = {
+  context: string;
+  amount: number;
+  unit: string;
+  move: string;
+  progress: number;
+  icon: InstructionIcon;
+};
+
+const INSTRUCTION_SLIDES: InstructionSlide[] = [
+  {
+    context: "You need to burn",
+    amount: 300,
+    unit: "calories",
+    move: "Walk 40 minutes",
+    progress: 74,
+    icon: "walk",
+  },
+  {
+    context: "Make up for lunch",
+    amount: 180,
+    unit: "calories",
+    move: "Brisk stairs, 20 min",
+    progress: 62,
+    icon: "stairs",
+  },
+  {
+    context: "Almost at your goal",
+    amount: 90,
+    unit: "calories left",
+    move: "Light jog, 12 min",
+    progress: 91,
+    icon: "run",
+  },
+  {
+    context: "Evening catch-up",
+    amount: 240,
+    unit: "calories",
+    move: "Cycling, 25 minutes",
+    progress: 55,
+    icon: "bike",
+  },
+];
+
+function InstructionGlyph({ icon }: { icon: InstructionIcon }) {
+  const stroke = "var(--accent)";
+  const common = {
+    width: 13,
+    height: 13,
+    viewBox: "0 0 24 24" as const,
+    fill: "none" as const,
+    stroke,
+    strokeWidth: 2.5,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (icon) {
+    case "walk":
+      return (
+        <svg {...common}>
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      );
+    case "bike":
+      return (
+        <svg {...common}>
+          <circle cx="6.5" cy="15.5" r="3.5" />
+          <circle cx="17.5" cy="15.5" r="3.5" />
+          <path d="M6.5 15.5 10 8h3l2 7.5M13 8l4.5 7.5h3" />
+        </svg>
+      );
+    case "run":
+      return (
+        <svg {...common}>
+          <path d="M13 4v3M9 20l3-6 2 3 4-7M9 11h6" />
+        </svg>
+      );
+    case "stairs":
+      return (
+        <svg {...common}>
+          <path d="M4 20h4v-4h4v-4h4v-4h4M8 16h4M12 12h4M16 8h4" />
+        </svg>
+      );
+  }
+}
+
+function AppCardBody({ data }: { data: InstructionSlide }) {
+  return (
+    <>
+      <p style={{ fontSize: ".76rem", color: "#aaa", marginBottom: 6 }}>
+        {data.context}
+      </p>
+      <p
+        className="display"
+        style={{
+          fontSize: "clamp(2.65rem, 11vw, 4.25rem)",
+          fontWeight: 800,
+          lineHeight: 1,
+          letterSpacing: "-.05em",
+          color: "var(--accent)",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {data.amount}
+      </p>
+      <p
+        style={{
+          fontSize: ".9rem",
+          color: "#666",
+          fontWeight: 500,
+          marginTop: 5,
+          marginBottom: 20,
+        }}
+      >
+        {data.unit}
+      </p>
+
+      <div style={{ height: 1, background: "#f0f0f0", marginBottom: 18 }} />
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginBottom: 22,
+        }}
+      >
+        <div
+          style={{
+            width: 34,
+            height: 34,
+            borderRadius: "50%",
+            background: "rgba(249,115,22,.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <InstructionGlyph icon={data.icon} />
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: ".69rem", color: "#aaa", marginBottom: 3 }}>
+            Your move
+          </p>
+          <p
+            className="display"
+            style={{
+              fontSize: "1.22rem",
+              fontWeight: 700,
+              letterSpacing: "-.02em",
+              color: "#0a0a0a",
+              lineHeight: 1.2,
+            }}
+          >
+            {data.move}
+          </p>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 8,
+        }}
+      >
+        <span style={{ fontSize: ".7rem", color: "#aaa" }}>Daily goal</span>
+        <span
+          style={{ fontSize: ".7rem", fontWeight: 700, color: "var(--accent)" }}
+        >
+          {data.progress}%
+        </span>
+      </div>
+      <div
+        style={{
+          height: 4,
+          background: "#f0f0f0",
+          borderRadius: 100,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="app-card-progress-fill"
+          style={{
+            width: `${data.progress}%`,
+            height: "100%",
+            background: "var(--accent)",
+            borderRadius: 100,
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
 /* ─────────────────────────────────────────────────
    Hero app-card mockup
    White card on dark bg (the "product proof")
 ───────────────────────────────────────────────── */
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 function AppCard() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const tick = () => {
+      if (document.hidden) return;
+      setCurrent((i) => (i + 1) % INSTRUCTION_SLIDES.length);
+    };
+    const id = window.setInterval(tick, 7800);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const body = (
+    <div
+      key={current}
+      className={prefersReducedMotion() ? undefined : "app-card-body-slot"}
+    >
+      <AppCardBody data={INSTRUCTION_SLIDES[current]} />
+    </div>
+  );
+
   return (
     <div
       style={{
@@ -21,7 +247,6 @@ function AppCard() {
           "0 2px 4px rgba(0,0,0,.15), 0 clamp(20px, 8vw, 32px) clamp(48px, 18vw, 96px) rgba(0,0,0,.6)",
       }}
     >
-      {/* Card header */}
       <div
         style={{
           display: "flex",
@@ -57,120 +282,7 @@ function AppCard() {
           </span>
         </div>
       </div>
-
-      {/* Goal number */}
-      <p
-        style={{ fontSize: ".76rem", color: "#aaa", marginBottom: 6 }}
-      >
-        You need to burn
-      </p>
-      <p
-        className="display"
-        style={{
-          fontSize: "clamp(2.65rem, 11vw, 4.25rem)",
-          fontWeight: 800,
-          lineHeight: 1,
-          letterSpacing: "-.05em",
-          color: "var(--accent)",
-        }}
-      >
-        300
-      </p>
-      <p
-        style={{
-          fontSize: ".9rem",
-          color: "#666",
-          fontWeight: 500,
-          marginTop: 5,
-          marginBottom: 20,
-        }}
-      >
-        calories
-      </p>
-
-      {/* Divider */}
-      <div style={{ height: 1, background: "#f0f0f0", marginBottom: 18 }} />
-
-      {/* Instruction */}
-      <div
-        style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}
-      >
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: "50%",
-            background: "rgba(249,115,22,.1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </div>
-        <div>
-          <p style={{ fontSize: ".69rem", color: "#aaa", marginBottom: 3 }}>
-            Your move
-          </p>
-          <p
-            className="display"
-            style={{
-              fontSize: "1.22rem",
-              fontWeight: 700,
-              letterSpacing: "-.02em",
-              color: "#0a0a0a",
-            }}
-          >
-            Walk 40 minutes
-          </p>
-        </div>
-      </div>
-
-      {/* Progress */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 8,
-        }}
-      >
-        <span style={{ fontSize: ".7rem", color: "#aaa" }}>Daily goal</span>
-        <span
-          style={{ fontSize: ".7rem", fontWeight: 700, color: "var(--accent)" }}
-        >
-          74%
-        </span>
-      </div>
-      <div
-        style={{
-          height: 4,
-          background: "#f0f0f0",
-          borderRadius: 100,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: "74%",
-            height: "100%",
-            background: "var(--accent)",
-            borderRadius: 100,
-          }}
-        />
-      </div>
+      {body}
     </div>
   );
 }
