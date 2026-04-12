@@ -377,24 +377,71 @@ const STEPS = [
   },
 ];
 
-const FEATURES = [
+type FeatureIconId = "delta" | "watch" | "camera" | "streak";
+
+const FEATURES: { name: string; desc: string; icon: FeatureIconId }[] = [
   {
     name: "Real-time calorie delta",
     desc: "Your live position against your goal, updated throughout the day.",
+    icon: "delta",
   },
   {
     name: "Smartwatch integration",
     desc: "Apple Watch and Fitbit supported. Real burn data, not estimates.",
+    icon: "watch",
   },
   {
     name: "AI food recognition",
     desc: "Photograph any meal. Calories logged in under 3 seconds.",
+    icon: "camera",
   },
   {
     name: "Daily score + streaks",
     desc: "A simple daily score and streak to keep consistency rewarding.",
+    icon: "streak",
   },
 ];
+
+function FeatureCardGlyph({ icon }: { icon: FeatureIconId }) {
+  const s = {
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24" as const,
+    fill: "none" as const,
+    stroke: "currentColor",
+    strokeWidth: 1.75,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (icon) {
+    case "delta":
+      return (
+        <svg {...s}>
+          <path d="M4 19V5M4 19h16M8 17V9m4 8V6m4 11v-5" />
+        </svg>
+      );
+    case "watch":
+      return (
+        <svg {...s}>
+          <rect x="6" y="6" width="12" height="12" rx="3" />
+          <path d="M9 6V4h6v2M9 18v2h6v-2M12 9v2" />
+        </svg>
+      );
+    case "camera":
+      return (
+        <svg {...s}>
+          <path d="M4 9h3l2-2h6l2 2h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z" />
+          <circle cx="12" cy="13" r="3.5" />
+        </svg>
+      );
+    case "streak":
+      return (
+        <svg {...s}>
+          <path d="M8 21h8M12 3c-1 4-4 5-4 9a4 4 0 0 0 8 0c0-4-3-5-4-9z" />
+        </svg>
+      );
+  }
+}
 
 /* ─────────────────────────────────────────────────
    Page
@@ -413,17 +460,36 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Scroll reveal */
+  /* Scroll reveal — sync pass catches nodes already on screen (IO alone can miss first paint). */
   useEffect(() => {
+    const reveal = (el: Element) => {
+      el.classList.add("in");
+    };
+    const isInViewport = (el: Element) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || 0;
+      const vw = window.innerWidth || 0;
+      return r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw;
+    };
+
     const els = document.querySelectorAll("[data-reveal]");
     const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) e.target.classList.add("in");
-        }),
-      { threshold: 0.1 }
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) reveal(e.target);
+        }
+      },
+      {
+        rootMargin: "100px 0px 100px 0px",
+        threshold: [0, 0.08, 0.15],
+      }
     );
-    els.forEach((el) => io.observe(el));
+
+    els.forEach((el) => {
+      if (isInViewport(el)) reveal(el);
+      io.observe(el);
+    });
+
     return () => io.disconnect();
   }, []);
 
@@ -985,63 +1051,26 @@ export default function Home() {
             </span>
           </h2>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
-              gap: "clamp(1.75rem, 4vw, 2.5rem) clamp(2rem, 6vw, 5rem)",
-            }}
-          >
-            {FEATURES.map(({ name, desc }, i) => (
-              <div
+          <div className="feature-grid">
+            {FEATURES.map(({ name, desc, icon }, i) => (
+              <article
                 key={name}
-                className="feature-row"
+                className="feature-card"
                 data-reveal
                 data-d={String((i % 2) + 1)}
+                aria-labelledby={`feature-${i}`}
               >
-                <div
-                  style={{
-                    color: "var(--accent)",
-                    marginTop: 3,
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
+                <span className="feature-card__index" aria-hidden>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="feature-card__icon" aria-hidden>
+                  <FeatureCardGlyph icon={icon} />
                 </div>
-                <div>
-                  <p
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      marginBottom: 5,
-                      color: "var(--text-1)",
-                    }}
-                  >
-                    {name}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: ".875rem",
-                      color: "var(--text-2)",
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    {desc}
-                  </p>
-                </div>
-              </div>
+                <h3 className="feature-card__title" id={`feature-${i}`}>
+                  {name}
+                </h3>
+                <p className="feature-card__desc">{desc}</p>
+              </article>
             ))}
           </div>
 
