@@ -373,13 +373,18 @@ export default function Home() {
           </div>
 
           {/* CTA orange always: readable on dark hero AND white sections */}
-          <button
-            type="button"
+          <a
+            href="#waitlist"
             className="btn-orange nav-cta-compact"
-            style={{ padding: "9px 20px", fontSize: ".875rem", borderRadius: "8px" }}
+            style={{
+              padding: "9px 20px",
+              fontSize: ".875rem",
+              borderRadius: "8px",
+              textDecoration: "none",
+            }}
           >
             Join waitlist
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -925,6 +930,7 @@ export default function Home() {
           CTA dark, bookends the page like Tesla
       ══════════════════════════════════════════ */}
       <section
+        id="waitlist"
         className="section-pad-cta"
         style={{
           background: "#0a0a0a",
