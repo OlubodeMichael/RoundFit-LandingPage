@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 type InstructionIcon = "walk" | "bike" | "run" | "stairs";
@@ -427,19 +428,27 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-
+    <>
       {/* ══════════════════════════════════════════
           NAV transparent on dark, white on light
       ══════════════════════════════════════════ */}
-      <nav className={`nav ${scrolled ? "scrolled" : "top"}`}>
+      <nav className={`nav ${scrolled ? "scrolled" : "top"}`} aria-label="Primary">
         <div
           className="page-wrap"
           style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
 
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 3 }}>
+          <Link
+            href="/"
+            aria-label="Calore home"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 3,
+              textDecoration: "none",
+            }}
+          >
             <span
               className="display"
               style={{
@@ -461,7 +470,7 @@ export default function Home() {
                 marginTop: 3,
               }}
             />
-          </div>
+          </Link>
 
           {/* Links */}
           <div
@@ -500,6 +509,7 @@ export default function Home() {
         </div>
       </nav>
 
+      <main id="main-content">
       {/* ══════════════════════════════════════════
           HERO dark, full-viewport
           WHOOP darkness + Apple centering + Tesla drama
@@ -1115,6 +1125,8 @@ export default function Home() {
         </div>
       </section>
 
+      </main>
+
       {/* ══════════════════════════════════════════
           FOOTER dark, minimal
       ══════════════════════════════════════════ */}
@@ -1161,6 +1173,6 @@ export default function Home() {
         </div>
       </footer>
 
-    </div>
+    </>
   );
 }
