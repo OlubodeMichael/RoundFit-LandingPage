@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Calore — your fitness decision engine";
+export const alt = "RoundFit — your fitness decision engine";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -35,7 +35,7 @@ export default function OpenGraphImage() {
               letterSpacing: "-0.04em",
             }}
           >
-            calore
+            roundfit
           </span>
           <span
             style={{

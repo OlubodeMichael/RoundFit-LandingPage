@@ -593,7 +593,7 @@ export default function Home() {
           {/* Logo */}
           <Link
             href="/"
-            aria-label="Calore home"
+            aria-label="RoundFit home"
             style={{
               display: "flex",
               alignItems: "flex-start",
@@ -611,7 +611,7 @@ export default function Home() {
                 transition: "color .3s ease",
               }}
             >
-              calore
+              roundfit
             </span>
             <div
               style={{
@@ -1244,7 +1244,7 @@ export default function Home() {
           >
             Launching soon at{" "}
             <span style={{ color: "rgba(255,255,255,.8)", fontWeight: 500 }}>
-              calore.fit
+              roundfit.com
             </span>
             . Join the waitlist now.
           </p>
@@ -1306,7 +1306,7 @@ export default function Home() {
                 color: "rgba(255,255,255,.7)",
               }}
             >
-              calore
+              roundfit
             </span>
             <div
               style={{

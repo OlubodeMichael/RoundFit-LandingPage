@@ -3,9 +3,9 @@ import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const defaultTitle = "Calore — Your fitness decision engine";
+const defaultTitle = "RoundFit — Your fitness decision engine";
 const defaultDescription =
-  "Calore tells you exactly what to do to hit your calorie and fitness goals in real time. Smartwatch sync, AI food logging, and one clear daily instruction—not another dashboard.";
+  "RoundFit tells you exactly what to do to hit your calorie and fitness goals in real time. Smartwatch sync, AI food logging, and one clear daily instruction—not another dashboard.";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -14,7 +14,7 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
-      name: "Calore",
+      name: "RoundFit",
       description: defaultDescription,
       inLanguage: "en-US",
       publisher: { "@id": `${SITE_URL}/#organization` },
@@ -22,13 +22,13 @@ const jsonLd = {
     {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
-      name: "Calore",
+      name: "RoundFit",
       url: SITE_URL,
       description: defaultDescription,
     },
     {
       "@type": "SoftwareApplication",
-      name: "Calore",
+      name: "RoundFit",
       applicationCategory: "HealthApplication",
       operatingSystem: "Web, iOS, Android",
       description: defaultDescription,
@@ -67,14 +67,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  applicationName: "Calore",
+  applicationName: "RoundFit",
   title: {
     default: defaultTitle,
-    template: "%s | Calore",
+    template: "%s | RoundFit",
   },
   description: defaultDescription,
   keywords: [
-    "Calore",
+    "RoundFit",
     "fitness app",
     "calorie goal",
     "Apple Watch fitness",
@@ -84,9 +84,9 @@ export const metadata: Metadata = {
     "activity tracker",
     "daily fitness plan",
   ],
-  authors: [{ name: "Calore", url: SITE_URL }],
-  creator: "Calore",
-  publisher: "Calore",
+  authors: [{ name: "RoundFit", url: SITE_URL }],
+  creator: "RoundFit",
+  publisher: "RoundFit",
   category: "health",
   formatDetection: {
     email: false,
@@ -108,7 +108,7 @@ export const metadata: Metadata = {
     title: defaultTitle,
     description:
       "Stop tracking. Start deciding. Real-time instructions from your smartwatch and meals.",
-    siteName: "Calore",
+    siteName: "RoundFit",
   },
   twitter: {
     card: "summary_large_image",
