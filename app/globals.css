@@ -21,7 +21,8 @@
 
 #waitlist,
 #how-it-works,
-#features {
+#features,
+#recovery {
   scroll-margin-top: calc(var(--nav-h) + 8px);
 }
 

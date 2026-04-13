@@ -3,9 +3,9 @@ import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const defaultTitle = "RoundFit — Your fitness decision engine";
+const defaultTitle = "RoundFit: Calories, Train & Recovery";
 const defaultDescription =
-  "RoundFit tells you exactly what to do to hit your calorie and fitness goals in real time. Smartwatch sync, AI food logging, and one clear daily instruction—not another dashboard.";
+  "RoundFit tracks your calories, guides your training, and monitors your recovery. One clear daily decision. Health app sync, AI food logging, and real-time workout guidance.";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -83,6 +83,10 @@ export const metadata: Metadata = {
     "weight loss app",
     "activity tracker",
     "daily fitness plan",
+    "recovery score",
+    "HRV tracking",
+    "workout guidance",
+    "sleep tracking",
   ],
   authors: [{ name: "RoundFit", url: SITE_URL }],
   creator: "RoundFit",
@@ -107,14 +111,14 @@ export const metadata: Metadata = {
     url: "/",
     title: defaultTitle,
     description:
-      "Stop tracking. Start deciding. Real-time instructions from your smartwatch and meals.",
+      "Calories, training, and recovery unified into one clear daily decision.",
     siteName: "RoundFit",
   },
   twitter: {
     card: "summary_large_image",
     title: defaultTitle,
     description:
-      "Stop tracking. Start deciding. Real-time fitness decisions from your data.",
+      "Track calories. Train smart. Recover right. RoundFit gives you one clear action every day.",
   },
   /* Tab + PWA: file is public/favicon.svg → URL /favicon.svg */
   icons: {

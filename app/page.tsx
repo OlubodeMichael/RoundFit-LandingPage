@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-type InstructionIcon = "walk" | "bike" | "run" | "stairs";
+type InstructionIcon = "walk" | "bike" | "run" | "stairs" | "recovery" | "dumbbell";
 
 type InstructionSlide = {
   context: string;
@@ -47,6 +47,22 @@ const INSTRUCTION_SLIDES: InstructionSlide[] = [
     progress: 55,
     icon: "bike",
   },
+  {
+    context: "Recovery check",
+    amount: 78,
+    unit: "recovery score",
+    move: "Light session today",
+    progress: 78,
+    icon: "recovery",
+  },
+  {
+    context: "Post-workout burn",
+    amount: 340,
+    unit: "cal burned",
+    move: "Great lift, rest tonight",
+    progress: 88,
+    icon: "dumbbell",
+  },
 ];
 
 function InstructionGlyph({ icon }: { icon: InstructionIcon }) {
@@ -86,6 +102,18 @@ function InstructionGlyph({ icon }: { icon: InstructionIcon }) {
       return (
         <svg {...common}>
           <path d="M4 20h4v-4h4v-4h4v-4h4M8 16h4M12 12h4M16 8h4" />
+        </svg>
+      );
+    case "recovery":
+      return (
+        <svg {...common}>
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      );
+    case "dumbbell":
+      return (
+        <svg {...common}>
+          <path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 8h12M6 16h12" />
         </svg>
       );
   }
@@ -411,57 +439,67 @@ function EmailForm({
 const SOLUTION = [
   {
     q: "Ate too much?",
-    a: "We calculate exactly how to make up for it before your day ends.",
+    a: "We calculate exactly how to make up for it: a specific move, time, and effort, before your day ends.",
   },
   {
-    q: "Didn't move enough?",
-    a: "We give you one specific action, with the time and effort required.",
+    q: "Skipped your workout?",
+    a: "We adjust your calorie target and suggest a light recovery session so you still finish the week ahead.",
   },
   {
-    q: "On track?",
-    a: "We confirm it and adjust in real time so you stay there.",
+    q: "Feeling drained?",
+    a: "We read your recovery score, lower the intensity, and protect tomorrow's performance today.",
   },
 ];
 
 const STEPS = [
   {
     n: 1,
-    title: "Connect your smartwatch",
-    desc: "Apple Watch or Fitbit. Real calorie burn data, not estimates.",
+    title: "Connect your health app",
+    desc: "Apple Health, Google Fit, Fitbit, or WHOOP. Real calorie burn, HRV, and sleep data, pulled automatically.",
   },
   {
     n: 2,
-    title: "Log your food",
-    desc: "Snap a photo or speak it. GPT-4 Vision identifies and logs your calories in seconds.",
+    title: "Log food and workouts",
+    desc: "Snap a photo or speak it. GPT-4 Vision logs your calories in seconds. Workouts sync automatically.",
   },
   {
     n: 3,
-    title: "Get real-time instructions",
-    desc: "One clear action, recalculated every hour. No dashboard to decode.",
+    title: "Get one clear decision",
+    desc: "Eat less, train harder, or recover. One action, recalculated every hour. No dashboard to decode.",
   },
 ];
 
-type FeatureIconId = "delta" | "watch" | "camera" | "streak";
+type FeatureIconId = "delta" | "watch" | "camera" | "streak" | "dumbbell" | "moon";
 
 const FEATURES: { name: string; desc: string; icon: FeatureIconId }[] = [
   {
     name: "Real-time calorie delta",
-    desc: "Your live position against your goal, updated throughout the day.",
+    desc: "Your live position against your daily calorie goal, updated throughout the day.",
     icon: "delta",
   },
   {
-    name: "Smartwatch integration",
-    desc: "Apple Watch and Fitbit supported. Real burn data, not estimates.",
-    icon: "watch",
-  },
-  {
     name: "AI food recognition",
-    desc: "Photograph any meal. Calories logged in under 3 seconds.",
+    desc: "Photograph any meal. GPT-4 Vision logs your calories in under 3 seconds.",
     icon: "camera",
   },
   {
+    name: "Smart workout guidance",
+    desc: "Personalized exercise recommendations based on your goals and today's calorie state.",
+    icon: "dumbbell",
+  },
+  {
+    name: "Health app sync",
+    desc: "Apple Health, Google Fit, Fitbit, and WHOOP. Real burn data and HRV, pulled automatically.",
+    icon: "watch",
+  },
+  {
+    name: "Recovery readiness score",
+    desc: "HRV, sleep quality, and resting heart rate combined into one daily readiness number.",
+    icon: "moon",
+  },
+  {
     name: "Daily score + streaks",
-    desc: "A simple daily score and streak to keep consistency rewarding.",
+    desc: "A simple score across all three pillars and a streak to keep consistency rewarding.",
     icon: "streak",
   },
 ];
@@ -502,6 +540,18 @@ function FeatureCardGlyph({ icon }: { icon: FeatureIconId }) {
       return (
         <svg {...s}>
           <path d="M8 21h8M12 3c-1 4-4 5-4 9a4 4 0 0 0 8 0c0-4-3-5-4-9z" />
+        </svg>
+      );
+    case "dumbbell":
+      return (
+        <svg {...s}>
+          <path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 8h12M6 16h12" />
+        </svg>
+      );
+    case "moon":
+      return (
+        <svg {...s}>
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
       );
   }
@@ -546,7 +596,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Scroll reveal — sync pass catches nodes already on screen (IO alone can miss first paint). */
+  /* Scroll reveal: sync pass catches nodes already on screen (IO alone can miss first paint). */
   useEffect(() => {
     const reveal = (el: Element) => {
       el.classList.add("in");
@@ -629,7 +679,7 @@ export default function Home() {
             className="hidden md:flex items-center"
             style={{ gap: 32 }}
           >
-            {["How it works", "Features"].map((l) => (
+            {["How it works", "Features", "Recovery"].map((l) => (
               <a
                 key={l}
                 href={`#${l.toLowerCase().replace(/ /g, "-")}`}
@@ -701,7 +751,7 @@ export default function Home() {
                 textTransform: "uppercase",
               }}
             >
-              AI Decision Engine
+              Calories · Train · Recovery
             </span>
           </div>
 
@@ -717,9 +767,9 @@ export default function Home() {
               margin: "0 auto clamp(1rem, 4vw, 1.75rem)",
             }}
           >
-            <span style={{ color: "#fff" }}>Stop guessing</span>
+            <span style={{ color: "#fff" }}>Calories. Train.</span>
             <br />
-            <span style={{ color: "rgba(255,255,255,.5)" }}>your fitness.</span>
+            <span style={{ color: "rgba(255,255,255,.5)" }}>Recover.</span>
           </h1>
 
           {/* Subtext visible, not buried */}
@@ -735,8 +785,7 @@ export default function Home() {
               paddingRight: "clamp(0px, 2vw, 8px)",
             }}
           >
-            Connect your smartwatch. Track your food.
-            Get told exactly what to do to hit your goal.
+            RoundFit tracks what you eat, guides your training, and monitors your recovery. Then gives you one clear action to hit your goals.
           </p>
 
           {/* Form bigger button, clear CTA */}
@@ -876,6 +925,115 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════
+          THREE PILLARS: Calories · Train · Recovery
+      ══════════════════════════════════════════ */}
+      <section className="section-pad" style={{ background: "#fff" }}>
+        <div className="page-wrap">
+          <span className="eyebrow" style={{ marginBottom: 20 }} data-reveal>
+            What we track
+          </span>
+          <h2
+            className="display"
+            data-reveal
+            data-d="1"
+            style={{
+              fontSize: "clamp(2.2rem, 4.5vw, 3.75rem)",
+              fontWeight: 800,
+              letterSpacing: "-.045em",
+              lineHeight: 1.08,
+              marginBottom: "clamp(2rem, 5vw, 3rem)",
+              maxWidth: 620,
+            }}
+          >
+            Three pillars.
+            <br />
+            <span style={{ color: "var(--text-2)" }}>One clear decision.</span>
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+              gap: "clamp(12px, 3vw, 20px)",
+            }}
+          >
+            {[
+              {
+                label: "Calories",
+                icon: (
+                  <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19V5M4 19h16M8 17V9m4 8V6m4 11v-5" />
+                  </svg>
+                ),
+                desc: "AI food logging plus live health app data. Your real-time calorie position, not an estimate.",
+              },
+              {
+                label: "Train",
+                icon: (
+                  <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 8h12M6 16h12" />
+                  </svg>
+                ),
+                desc: "Workout guidance calibrated to your goals and today's calorie state. Push when it matters. Rest when it doesn't.",
+              },
+              {
+                label: "Recovery",
+                icon: (
+                  <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                ),
+                desc: "Sleep, HRV, and readiness score pulled from your phone's health app. Know when to push hard and when to protect your gains.",
+              },
+            ].map(({ label, icon, desc }, i) => (
+              <div
+                key={label}
+                data-reveal
+                data-d={String(i + 1)}
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 16,
+                  padding: "clamp(20px, 4vw, 28px)",
+                }}
+              >
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
+                    background: "rgba(249,115,22,.08)",
+                    color: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 18,
+                  }}
+                >
+                  {icon}
+                </div>
+                <h3
+                  className="display"
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    letterSpacing: "-.025em",
+                    marginBottom: 10,
+                    color: "var(--text-1)",
+                  }}
+                >
+                  {label}
+                </h3>
+                <p style={{ fontSize: ".9rem", color: "var(--text-2)", lineHeight: 1.7 }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           PROBLEM white, editorial punch
       ══════════════════════════════════════════ */}
       <section className="section-pad">
@@ -902,11 +1060,11 @@ export default function Home() {
                 marginBottom: "clamp(1.5rem, 5vw, 2.75rem)",
               }}
             >
-              Most fitness apps
+              Three apps.
               <br />
-              give you numbers.
+              Three dashboards.
               <br />
-              <span style={{ color: "var(--text-2)" }}>Not answers.</span>
+              <span style={{ color: "var(--text-2)" }}>Zero decisions.</span>
             </h2>
 
             <div
@@ -917,7 +1075,8 @@ export default function Home() {
               {[
                 "You log your meals",
                 "You track your workouts",
-                "You still don't know if you're on track",
+                "You monitor your sleep",
+                "You still don't know if you're making progress",
               ].map((item, i) => (
                 <div
                   key={i}
@@ -1159,11 +1318,9 @@ export default function Home() {
               maxWidth: 460,
             }}
           >
-            Everything you need.
+            Built around
             <br />
-            <span style={{ color: "var(--text-2)" }}>
-              Nothing you don&apos;t.
-            </span>
+            <span style={{ color: "var(--text-2)" }}>three pillars.</span>
           </h2>
 
           <div className="feature-grid">
@@ -1189,6 +1346,102 @@ export default function Home() {
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          RECOVERY dark callout
+      ══════════════════════════════════════════ */}
+      <section
+        id="recovery"
+        className="section-pad"
+        style={{ background: "#0f0f0f" }}
+      >
+        <div className="page-wrap">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
+              gap: "clamp(2rem, 6vw, 4rem)",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <span
+                className="eyebrow-muted"
+                style={{ marginBottom: 20 }}
+                data-reveal
+              >
+                Recovery
+              </span>
+              <h2
+                className="display"
+                data-reveal
+                data-d="1"
+                style={{
+                  fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
+                  fontWeight: 800,
+                  letterSpacing: "-.045em",
+                  lineHeight: 1.08,
+                  color: "#fff",
+                  marginBottom: "clamp(1rem, 3vw, 1.5rem)",
+                }}
+              >
+                Know when to push.
+                <br />
+                <span style={{ color: "rgba(255,255,255,.45)" }}>
+                  Know when to rest.
+                </span>
+              </h2>
+              <p
+                data-reveal
+                data-d="2"
+                style={{
+                  fontSize: "clamp(0.9rem, 2.5vw, 1rem)",
+                  color: "rgba(255,255,255,.5)",
+                  lineHeight: 1.75,
+                  maxWidth: 420,
+                }}
+              >
+                RoundFit pulls HRV, sleep quality, and resting heart rate directly from your phone&apos;s health app every morning. If you&apos;re under-recovered, we dial back intensity so you don&apos;t sabotage your gains.
+              </p>
+            </div>
+
+            <div
+              data-reveal
+              data-d="3"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 12,
+              }}
+            >
+              {[
+                { label: "Recovery Score", value: "78", unit: "/100", color: "#22c55e" },
+                { label: "Sleep Quality", value: "7.4", unit: "hrs", color: "var(--accent)" },
+                { label: "HRV", value: "62", unit: "ms", color: "#a78bfa" },
+                { label: "Resting HR", value: "54", unit: "bpm", color: "#38bdf8" },
+              ].map(({ label, value, unit, color }) => (
+                <div
+                  key={label}
+                  style={{
+                    background: "rgba(255,255,255,.04)",
+                    border: "1px solid rgba(255,255,255,.07)",
+                    borderRadius: 14,
+                    padding: "clamp(14px, 3vw, 20px)",
+                  }}
+                >
+                  <p style={{ fontSize: ".68rem", color: "rgba(255,255,255,.35)", marginBottom: 10, letterSpacing: ".05em", textTransform: "uppercase" }}>
+                    {label}
+                  </p>
+                  <p style={{ fontSize: "clamp(1.6rem, 5vw, 2.2rem)", fontWeight: 800, letterSpacing: "-.04em", color, lineHeight: 1 }}>
+                    {value}
+                    <span style={{ fontSize: ".65em", fontWeight: 500, color: "rgba(255,255,255,.3)", marginLeft: 3 }}>{unit}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1226,8 +1479,8 @@ export default function Home() {
               marginBottom: "clamp(0.75rem, 3vw, 1.25rem)",
             }}
           >
-            Ready to stop
-            <br />guessing?
+            Calories. Train.
+            <br />Recover.
           </h2>
 
           <p
@@ -1242,11 +1495,11 @@ export default function Home() {
               paddingRight: "clamp(0px, 3vw, 12px)",
             }}
           >
-            Launching soon at{" "}
+            The first fitness app that connects all three and tells you exactly what to do. Launching soon at{" "}
             <span style={{ color: "rgba(255,255,255,.8)", fontWeight: 500 }}>
               roundfit.com
             </span>
-            . Join the waitlist now.
+            .
           </p>
 
           <div
