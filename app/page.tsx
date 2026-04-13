@@ -751,7 +751,7 @@ export default function Home() {
                 textTransform: "uppercase",
               }}
             >
-              Calories · Train · Recovery
+              Nutrition · Train · Recovery
             </span>
           </div>
 
@@ -767,7 +767,7 @@ export default function Home() {
               margin: "0 auto clamp(1rem, 4vw, 1.75rem)",
             }}
           >
-            <span style={{ color: "#fff" }}>Calories. Train.</span>
+            <span style={{ color: "#fff" }}>Nutrition. Train.</span>
             <br />
             <span style={{ color: "rgba(255,255,255,.5)" }}>Recover.</span>
           </h1>
