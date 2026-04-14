@@ -1573,7 +1573,7 @@ export default function Home() {
           >
             The first fitness app that connects all three and tells you exactly what to do. Launching soon at{" "}
             <span style={{ color: "rgba(255,255,255,.8)", fontWeight: 500 }}>
-              roundfit.app
+              roundfit.co
             </span>
             .
           </p>
