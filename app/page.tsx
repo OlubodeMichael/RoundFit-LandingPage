@@ -678,6 +678,12 @@ export default function Home() {
           <Link
             href="/"
             aria-label="RoundFit home"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             style={{
               display: "flex",
               alignItems: "flex-start",
@@ -1619,7 +1625,17 @@ export default function Home() {
       >
         <div className="page-wrap footer-inner">
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 3 }}>
+          <Link
+            href="/"
+            aria-label="RoundFit home"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            style={{ display: "flex", alignItems: "flex-start", gap: 3, textDecoration: "none" }}
+          >
             <span
               className="display"
               style={{
@@ -1640,7 +1656,7 @@ export default function Home() {
                 marginTop: 3,
               }}
             />
-          </div>
+          </Link>
 
           {/* Links */}
           <div className="footer-links">
