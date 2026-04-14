@@ -449,18 +449,22 @@ const SOLUTION = [
     q: "Feeling drained?",
     a: "We read your recovery score, lower the intensity, and protect tomorrow's performance today.",
   },
+  {
+    q: "Hit a plateau?",
+    a: "We compare your weekly calorie delta against your weight log, adjust your daily budget, and tell you exactly what needs to change.",
+  },
 ];
 
 const STEPS = [
   {
     n: 1,
-    title: "Connect your health app",
-    desc: "Apple Health, Google Fit, Fitbit, or WHOOP. Real calorie burn, HRV, and sleep data, pulled automatically.",
+    title: "Connect Apple Health or Google Fit",
+    desc: "Your smartwatch already syncs data to your phone. RoundFit reads from there: calories burned, HRV, sleep, and steps, all pulled automatically. Works with Apple Watch, Fitbit, Garmin, WHOOP, and any device that syncs to your health app.",
   },
   {
     n: 2,
-    title: "Log food and workouts",
-    desc: "Snap a photo or speak it. GPT-4 Vision logs your calories in seconds. Workouts sync automatically.",
+    title: "Log your food",
+    desc: "Snap a photo, scan a barcode, or speak it. GPT-4 Vision identifies your meal and logs calories in under 3 seconds. Workouts sync automatically from your health app.",
   },
   {
     n: 3,
@@ -469,38 +473,61 @@ const STEPS = [
   },
 ];
 
-type FeatureIconId = "delta" | "watch" | "camera" | "streak" | "dumbbell" | "moon";
+type FeatureIconId = "delta" | "watch" | "camera" | "streak" | "dumbbell" | "moon" | "barcode";
 
-const FEATURES: { name: string; desc: string; icon: FeatureIconId }[] = [
+const FEATURE_PILLARS: {
+  pillar: string;
+  features: { name: string; desc: string; icon: FeatureIconId }[];
+}[] = [
   {
-    name: "Real-time calorie delta",
-    desc: "Your live position against your daily calorie goal, updated throughout the day.",
-    icon: "delta",
+    pillar: "Nutrition",
+    features: [
+      {
+        name: "Real-time calorie delta",
+        desc: "Your live position against your daily calorie goal, updated throughout the day.",
+        icon: "delta",
+      },
+      {
+        name: "AI food recognition",
+        desc: "Photograph any meal, scan a barcode, or type it manually. GPT-4 Vision logs your calories in under 3 seconds.",
+        icon: "camera",
+      },
+      {
+        name: "Barcode scanner",
+        desc: "Scan any packaged food. Powered by Open Food Facts. 2.8 million products across 150 countries. Instant calories, macros, and product image.",
+        icon: "barcode",
+      },
+    ],
   },
   {
-    name: "AI food recognition",
-    desc: "Photograph any meal. GPT-4 Vision logs your calories in under 3 seconds.",
-    icon: "camera",
+    pillar: "Train",
+    features: [
+      {
+        name: "Smart workout guidance",
+        desc: "Personalised exercise recommendations based on your goals and today's calorie state.",
+        icon: "dumbbell",
+      },
+      {
+        name: "Health app sync",
+        desc: "RoundFit reads directly from Apple Health and Google Fit on your phone. Your smartwatch syncs there automatically. We pull everything from one place.",
+        icon: "watch",
+      },
+    ],
   },
   {
-    name: "Smart workout guidance",
-    desc: "Personalized exercise recommendations based on your goals and today's calorie state.",
-    icon: "dumbbell",
-  },
-  {
-    name: "Health app sync",
-    desc: "Apple Health, Google Fit, Fitbit, and WHOOP. Real burn data and HRV, pulled automatically.",
-    icon: "watch",
-  },
-  {
-    name: "Recovery readiness score",
-    desc: "HRV, sleep quality, and resting heart rate combined into one daily readiness number.",
-    icon: "moon",
-  },
-  {
-    name: "Daily score + streaks",
-    desc: "A simple score across all three pillars and a streak to keep consistency rewarding.",
-    icon: "streak",
+    pillar: "Recovery",
+    features: [
+      {
+        name: "Recovery readiness score",
+        desc: "HRV, sleep quality, and resting heart rate combined into one daily readiness number. Pulled every morning from your health app.",
+        icon: "moon",
+      },
+      {
+        name: "Daily score + streaks",
+        desc: "A simple score across all three pillars and a streak to keep consistency rewarding.",
+        icon: "streak",
+      },
+    ],
   },
 ];
 
@@ -552,6 +579,13 @@ function FeatureCardGlyph({ icon }: { icon: FeatureIconId }) {
       return (
         <svg {...s}>
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      );
+    case "barcode":
+      return (
+        <svg {...s}>
+          <path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14" />
+          <path d="M3 9h18M3 15h18" strokeWidth={0} fill="none" />
         </svg>
       );
   }
@@ -751,7 +785,7 @@ export default function Home() {
                 textTransform: "uppercase",
               }}
             >
-              Nutrition · Train · Recovery
+              Nutrition · Train · Recovery · Decision
             </span>
           </div>
 
@@ -785,7 +819,7 @@ export default function Home() {
               paddingRight: "clamp(0px, 2vw, 8px)",
             }}
           >
-            RoundFit tracks what you eat, guides your training, and monitors your recovery. Then gives you one clear action to hit your goals.
+            RoundFit connects to your health app, logs your food in seconds, and monitors your recovery. Then gives you one clear action, every hour.
           </p>
 
           {/* Form bigger button, clear CTA */}
@@ -959,7 +993,7 @@ export default function Home() {
           >
             {[
               {
-                label: "Calories",
+                label: "Nutrition",
                 icon: (
                   <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19V5M4 19h16M8 17V9m4 8V6m4 11v-5" />
@@ -974,7 +1008,7 @@ export default function Home() {
                     <path d="M6 4v16M18 4v16M2 8h4M18 8h4M2 16h4M18 16h4M6 8h12M6 16h12" />
                   </svg>
                 ),
-                desc: "Workout guidance calibrated to your goals and today's calorie state. Push when it matters. Rest when it doesn't.",
+                desc: "Workout guidance calibrated to your goals and today's calorie state. Live burn data pulled from your health app. Push when it matters. Rest when it doesn't.",
               },
               {
                 label: "Recovery",
@@ -983,7 +1017,7 @@ export default function Home() {
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 ),
-                desc: "Sleep, HRV, and readiness score pulled from your phone's health app. Know when to push hard and when to protect your gains.",
+                desc: "Sleep, HRV, and readiness score pulled from Apple Health or Google Fit every morning. Know when to push hard and when to protect your gains.",
               },
             ].map(({ label, icon, desc }, i) => (
               <div
@@ -1073,7 +1107,7 @@ export default function Home() {
               style={{ display: "flex", flexDirection: "column", gap: 20 }}
             >
               {[
-                "You log your meals",
+                "You track your meals",
                 "You track your workouts",
                 "You monitor your sleep",
                 "You still don't know if you're making progress",
@@ -1150,8 +1184,7 @@ export default function Home() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
               gap: "clamp(12px, 3vw, 16px)",
             }}
           >
@@ -1323,28 +1356,64 @@ export default function Home() {
             <span style={{ color: "var(--text-2)" }}>three pillars.</span>
           </h2>
 
-          <div className="feature-grid">
-            {FEATURES.map(({ name, desc, icon }, i) => (
-              <article
-                key={name}
-                className="feature-card"
-                data-reveal
-                data-d={String((i % 2) + 1)}
-                aria-labelledby={`feature-${i}`}
-              >
-                <span className="feature-card__index" aria-hidden>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="feature-card__icon" aria-hidden>
-                  <FeatureCardGlyph icon={icon} />
+          {(() => {
+            let globalIndex = 0;
+            return FEATURE_PILLARS.map(({ pillar, features }) => (
+              <div key={pillar} style={{ marginBottom: "clamp(2rem, 6vw, 3.5rem)" }}>
+                {/* Pillar label */}
+                <div
+                  data-reveal
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: "clamp(1rem, 3vw, 1.5rem)",
+                  }}
+                >
+                  <span
+                    className="display"
+                    style={{
+                      fontSize: ".72rem",
+                      fontWeight: 700,
+                      letterSpacing: ".12em",
+                      textTransform: "uppercase",
+                      color: "var(--accent)",
+                    }}
+                  >
+                    {pillar}
+                  </span>
+                  <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
                 </div>
-                <h3 className="feature-card__title" id={`feature-${i}`}>
-                  {name}
-                </h3>
-                <p className="feature-card__desc">{desc}</p>
-              </article>
-            ))}
-          </div>
+
+                {/* Cards for this pillar */}
+                <div className="feature-grid">
+                  {features.map(({ name, desc, icon }) => {
+                    const idx = globalIndex++;
+                    return (
+                      <article
+                        key={name}
+                        className="feature-card"
+                        data-reveal
+                        data-d={String((idx % 2) + 1)}
+                        aria-labelledby={`feature-${idx}`}
+                      >
+                        <span className="feature-card__index" aria-hidden>
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <div className="feature-card__icon" aria-hidden>
+                          <FeatureCardGlyph icon={icon} />
+                        </div>
+                        <h3 className="feature-card__title" id={`feature-${idx}`}>
+                          {name}
+                        </h3>
+                        <p className="feature-card__desc">{desc}</p>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()}
 
         </div>
       </section>
@@ -1403,7 +1472,7 @@ export default function Home() {
                   maxWidth: 420,
                 }}
               >
-                RoundFit pulls HRV, sleep quality, and resting heart rate directly from your phone&apos;s health app every morning. If you&apos;re under-recovered, we dial back intensity so you don&apos;t sabotage your gains.
+                RoundFit reads HRV, sleep quality, and resting heart rate from Apple Health or Google Fit every morning. Whatever watch you wear, Apple Watch, Fitbit, or Garmin, if it syncs to your health app, we read it. If you&apos;re under-recovered, we dial back intensity so you don&apos;t sabotage your gains.
               </p>
             </div>
 
@@ -1418,9 +1487,10 @@ export default function Home() {
             >
               {[
                 { label: "Recovery Score", value: "78", unit: "/100", color: "#22c55e" },
-                { label: "Sleep Quality", value: "7.4", unit: "hrs", color: "var(--accent)" },
+                { label: "Sleep", value: "7.4", unit: "hrs", color: "var(--accent)" },
                 { label: "HRV", value: "62", unit: "ms", color: "#a78bfa" },
                 { label: "Resting HR", value: "54", unit: "bpm", color: "#38bdf8" },
+                { label: "Soreness", value: "3", unit: "/10", color: "#fb923c" },
               ].map(({ label, value, unit, color }) => (
                 <div
                   key={label}
@@ -1479,8 +1549,8 @@ export default function Home() {
               marginBottom: "clamp(0.75rem, 3vw, 1.25rem)",
             }}
           >
-            Calories. Train.
-            <br />Recover.
+            Nutrition. Training.
+            <br />Recovery. One decision.
           </h2>
 
           <p
@@ -1497,7 +1567,7 @@ export default function Home() {
           >
             The first fitness app that connects all three and tells you exactly what to do. Launching soon at{" "}
             <span style={{ color: "rgba(255,255,255,.8)", fontWeight: 500 }}>
-              roundfit.com
+              roundfit.app
             </span>
             .
           </p>
