@@ -1660,11 +1660,28 @@ export default function Home() {
 
           {/* Links */}
           <div className="footer-links">
-            {["Contact", "Privacy", "Twitter", "Instagram"].map((l) => (
-              <a key={l} href="#" className="footer-link">
-                {l}
-              </a>
-            ))}
+            <a href="mailto:privacy@roundfit.com" className="footer-link">
+              Contact
+            </a>
+            <Link href="/privacy" className="footer-link">
+              Privacy
+            </Link>
+            <a
+              href="https://twitter.com/roundfit"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="footer-link"
+            >
+              Twitter
+            </a>
+            <a
+              href="https://instagram.com/roundfit"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="footer-link"
+            >
+              Instagram
+            </a>
           </div>
         </div>
       </footer>
