@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 type InstructionIcon = "walk" | "bike" | "run" | "stairs" | "recovery" | "dumbbell";
@@ -627,8 +628,11 @@ export default function Home() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 56);
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const navUsesWhiteLogo = !scrolled;
 
   /* Scroll reveal: sync pass catches nodes already on screen (IO alone can miss first paint). */
   useEffect(() => {
@@ -686,32 +690,45 @@ export default function Home() {
             }}
             style={{
               display: "flex",
-              alignItems: "flex-start",
-              gap: 3,
+              alignItems: "center",
+              gap: 8,
               textDecoration: "none",
             }}
           >
-            <span
-              className="display"
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 800,
-                letterSpacing: "-.03em",
-                color: scrolled ? "var(--text-1)" : "#fff",
-                transition: "color .3s ease",
-              }}
-            >
-              roundfit
-            </span>
-            <div
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: "50%",
-                background: "var(--accent)",
-                marginTop: 3,
-              }}
+            <Image
+              src={navUsesWhiteLogo ? "/roundfitwhite.png" : "/logo.svg"}
+              alt="RoundFit"
+              width={44}
+              height={44}
+              priority
+              style={{ display: "block", borderRadius: 10 }}
             />
+            <div
+              className="hidden md:flex items-start"
+              style={{ gap: 3 }}
+            >
+              <span
+                className="display"
+                style={{
+                  fontSize: "1.1rem",
+                  fontWeight: 800,
+                  letterSpacing: "-.03em",
+                  color: scrolled ? "var(--text-1)" : "#fff",
+                  transition: "color .3s ease",
+                }}
+              >
+                roundfit
+              </span>
+              <div
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  background: "var(--accent)",
+                  marginTop: 3,
+                }}
+              />
+            </div>
           </Link>
 
           {/* Links */}
@@ -1634,28 +1651,45 @@ export default function Home() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            style={{ display: "flex", alignItems: "flex-start", gap: 3, textDecoration: "none" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              textDecoration: "none",
+            }}
           >
-            <span
-              className="display"
-              style={{
-                fontSize: "1rem",
-                fontWeight: 800,
-                letterSpacing: "-.03em",
-                color: "rgba(255,255,255,.7)",
-              }}
-            >
-              roundfit
-            </span>
-            <div
-              style={{
-                width: 4,
-                height: 4,
-                borderRadius: "50%",
-                background: "var(--accent)",
-                marginTop: 3,
-              }}
+            <Image
+              src="/roundfitwhite.png"
+              alt="RoundFit"
+              width={34}
+              height={34}
+              style={{ display: "block", borderRadius: 8 }}
             />
+            <div
+              className="hidden md:flex items-start"
+              style={{ gap: 3 }}
+            >
+              <span
+                className="display"
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: 800,
+                  letterSpacing: "-.03em",
+                  color: "rgba(255,255,255,.7)",
+                }}
+              >
+                roundfit
+              </span>
+              <div
+                style={{
+                  width: 4,
+                  height: 4,
+                  borderRadius: "50%",
+                  background: "var(--accent)",
+                  marginTop: 3,
+                }}
+              />
+            </div>
           </Link>
 
           {/* Links */}
