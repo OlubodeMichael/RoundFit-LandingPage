@@ -120,11 +120,11 @@ export const metadata: Metadata = {
     description:
       "Track calories. Train smart. Recover right. RoundFit gives you one clear action every day.",
   },
-  /* Tab + PWA: file is public/favicon.svg → URL /favicon.svg */
+  /* Use app/favicon.ico as the primary site icon */
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: "/favicon.svg",
-    apple: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/favicon.ico", type: "image/x-icon" }],
   },
 };
 
