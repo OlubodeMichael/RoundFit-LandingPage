@@ -4,6 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
+/** Dark backgrounds (hero nav, footer): use dark-mark asset file */
+const ROUND_FIT_LOGO_ON_DARK_BG = "/RoundFit_DarkK.PNG";
+/** Light backgrounds (scrolled white nav): use light-mark asset file */
+const ROUND_FIT_LOGO_ON_LIGHT_BG = "/RoundFit_light.PNG";
+
 type InstructionIcon = "walk" | "bike" | "run" | "stairs" | "recovery" | "dumbbell";
 
 type InstructionSlide = {
@@ -696,7 +701,7 @@ export default function Home() {
             }}
           >
             <Image
-              src={navUsesWhiteLogo ? "/roundfitwhite.png" : "/logo.svg"}
+              src={navUsesWhiteLogo ? ROUND_FIT_LOGO_ON_DARK_BG : ROUND_FIT_LOGO_ON_LIGHT_BG}
               alt="RoundFit"
               width={44}
               height={44}
@@ -1659,7 +1664,7 @@ export default function Home() {
             }}
           >
             <Image
-              src="/roundfitwhite.png"
+              src={ROUND_FIT_LOGO_ON_DARK_BG}
               alt="RoundFit"
               width={34}
               height={34}
