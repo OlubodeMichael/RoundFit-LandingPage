@@ -126,6 +126,24 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: [{ url: "/favicon.ico", type: "image/x-icon" }],
   },
+  /**
+   * Site verification meta tags (Search Console, Yandex Webmaster, etc.).
+   * `verification.google` expects the meta *content* token — not an AdSense `ca-pub-…` id.
+   * Custom keys (e.g. `me`) belong under `verification.other`.
+   */
+  verification: {
+    ...(process.env.GOOGLE_ADSENSE_ID && {
+      google: process.env.GOOGLE_ADSENSE_ID,
+    }),
+    ...(process.env.YANDEX_ADSENSE_ID && {
+      yandex: process.env.YANDEX_ADSENSE_ID,
+    }),
+    ...(process.env.MY_EMAIL && {
+      other: {
+        me: process.env.MY_EMAIL,
+      },
+    }),
+  },
 };
 
 export default function RootLayout({

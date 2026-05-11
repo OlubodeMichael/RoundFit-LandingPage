@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 
 /** Dark backgrounds (hero nav, footer): use dark-mark asset file */
-const ROUND_FIT_LOGO_ON_DARK_BG = "/RoundFit_DarkK.PNG";
+const ROUND_FIT_LOGO_ON_DARK_BG = "/RoundFit_Dark.PNG";
 /** Light backgrounds (scrolled white nav): use light-mark asset file */
 const ROUND_FIT_LOGO_ON_LIGHT_BG = "/RoundFit_light.PNG";
 
